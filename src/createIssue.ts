@@ -1,5 +1,25 @@
 import {LinearClient} from "@linear/sdk";
 
+async function getCurrentMonthParentIssueId() {
+    const apiKey = process.env.LINEAR_API_TOKEN
+    const linearClient = new LinearClient( { apiKey });
+    const me = await linearClient.viewer;
+    const myIssues = await me.createdIssues();
+
+    if (myIssues.nodes.length) {
+        //myIssues.nodes.map(issue => console.log(`${me.displayName} has issue: ${issue.title}, ${issue.id}`));
+        //const parentIssue = myIssues.nodes.find(parent => parent.title === "dummy");
+        const regexp = new RegExp('Parent*','g');
+        const parentIssue = myIssues.nodes.find(parent =>
+            parent.createdAt.getMonth() == new Date().getMonth() &&
+            parent.title.matchAll(regexp));
+        const parentIssueId = String(parentIssue?.id);
+        return parentIssueId;
+    } else {
+        console.log(`${me.displayName} has no issues`);
+        return  null;
+    }
+}
 
 async function createMyIssues() {
     const apiKey = process.env.LINEAR_API_TOKEN
@@ -10,7 +30,10 @@ async function createMyIssues() {
     console.log(team.id);
     if (team.id) {
         const today = new Date().getDate()
-        await linearClient.issueCreate({ teamId: team.id, title: "My Created Issue" });
+        await linearClient.issueCreate({ teamId: team.id, title: "Parent Issue" });
+        const currentMonthParentIssueId = await getCurrentMonthParentIssueId();
+        //console.log(currentMonthParentIssueId);
+        await linearClient.issueCreate({ teamId: team.id, title: "Child Issue", parentId: currentMonthParentIssueId  });
     }
 }
 
