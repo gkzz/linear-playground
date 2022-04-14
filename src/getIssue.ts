@@ -56,9 +56,10 @@ async function getMyIssues() {
         const parentIssue = myIssues.nodes.find(parent => parent.title === "dummy");
         const parentIssueId = parentIssue?.id;
         const childIssue = myIssues.nodes.find(child => child.title === "dummy2");
+        //const childIssueId = String(childIssue?.id);
         const childIssueId = String(childIssue?.id);
         //console.log(childIssue?.id);
-        await linearClient.issueUpdate(childIssueId, { parentId: parentIssueId } );
+        //await linearClient.issueUpdate(childIssueId, { parentId: parentIssueId } );
     } else {
         console.log(`${me.displayName} has no issues`);
     }

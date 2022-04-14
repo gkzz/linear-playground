@@ -25,15 +25,18 @@ async function createMyIssues() {
     const apiKey = process.env.LINEAR_API_TOKEN
     const linearClient = new LinearClient( { apiKey });
     const teams = await linearClient.teams();
-    console.log(teams);
+    //console.log(teams);
     const team = teams.nodes[0];
-    console.log(team.id);
+    //console.log(team.id);
     if (team.id) {
         const today = new Date().getDate()
-        await linearClient.issueCreate({ teamId: team.id, title: "Parent Issue" });
+        const resultIParentIssueCreate = await linearClient.issueCreate({ teamId: team.id, title: "Parent Issue" });
+        console.log(resultIParentIssueCreate);
+        console.log('---------- Successfully Created Parent Issue -------------');
         const currentMonthParentIssueId = await getCurrentMonthParentIssueId();
-        //console.log(currentMonthParentIssueId);
-        await linearClient.issueCreate({ teamId: team.id, title: "Child Issue", parentId: currentMonthParentIssueId  });
+        console.log(currentMonthParentIssueId);
+        const resultChildIssueCreate = await linearClient.issueCreate({ teamId: team.id, title: "Child Issue", parentId: currentMonthParentIssueId  });
+        console.log(resultChildIssueCreate);
     }
 }
 
